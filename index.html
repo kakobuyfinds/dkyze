@@ -1,0 +1,985 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+  <meta name="robots" content="index,follow,max-image-preview:large">
+  <meta name="theme-color" content="#f25b29">
+  <meta name="color-scheme" content="light">
+  <title>BBDBuy Spreadsheet — Product Research &amp; Link Checks</title>
+  <meta name="description" content="Build a clearer BBDBuy spreadsheet with product-link checks, variant records, sizing notes and category shortcuts for shoes, clothing and accessories.">
+  <meta name="keywords" content="BBDBuy spreadsheet, BBDBuy product links, BBDBuy finds, BBDBuy shopping guide, BBDBuy spreadsheet categories, BBDBuy product comparison">
+  <!-- This relative canonical resolves to the directory hosting this index.html. -->
+  
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="en_US">
+  <meta property="og:title" content="BBDBuy Spreadsheet — Make Every Product Row Useful">
+  <meta property="og:description" content="A practical product research guide: record the exact variant, keep evidence together and compare the details that matter.">
+  <meta property="og:site_name" content="BBDBuy Spreadsheet Research">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="BBDBuy Spreadsheet — Product Research & Link Checks">
+  <meta name="twitter:description" content="Category shortcuts, product evidence and a practical method for building a useful shopping spreadsheet.">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23f25b29'/%3E%3Cpath d='M17 16h18c13 0 16 14 6 17 12 4 8 17-4 17H17zm10 8v7h7c5 0 5-7 0-7zm0 15v4h8c4 0 4-4 0-4z' fill='%23171717'/%3E%3C/svg%3E">
+  <style>
+    :root {
+      --paper: #f4f4f1;
+      --white: #ffffff;
+      --ink: #191919;
+      --muted: #575753;
+      --line: #d5d5ce;
+      --accent: #f25b29;
+      --pale: #ffe8dc;
+      --radius: 5px;
+      --max: 1240px;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      background: var(--paper);
+      color: var(--ink);
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 16px;
+      line-height: 1.65;
+      -webkit-font-smoothing: antialiased;
+    }
+    a { color: inherit; text-decoration-thickness: 1px; text-underline-offset: 4px; }
+    button, input { font: inherit; }
+    button, a { -webkit-tap-highlight-color: transparent; }
+    button { cursor: pointer; }
+    a:focus-visible, button:focus-visible, input:focus-visible, summary:focus-visible {
+      outline: 3px solid #175dd1;
+      outline-offset: 5px;
+    }
+    img { display: block; max-width: 100%; }
+    h1, h2, h3, p, figure { margin: 0; }
+    h1, h2, h3 { line-height: 1.08; }
+    h2 { font-size: clamp(30px, 4.3vw, 58px); letter-spacing: -.055em; }
+    h3 { font-size: 23px; letter-spacing: -.035em; }
+    .wrap { width: min(var(--max), calc(100% - 64px)); margin-inline: auto; }
+    .mono {
+      font-family: "Courier New", Courier, monospace;
+      font-size: 11px;
+      font-weight: 700;
+      line-height: 1.5;
+      letter-spacing: .11em;
+      text-transform: uppercase;
+    }
+    .masthead { background: var(--ink); color: var(--white); }
+    .masthead-inner {
+      min-height: 78px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 22px;
+    }
+    .wordmark {
+      display: inline-flex;
+      align-items: center;
+      gap: 11px;
+      text-decoration: none;
+      font-weight: 900;
+      font-size: 21px;
+      letter-spacing: -.06em;
+    }
+    .mark {
+      width: 32px;
+      height: 32px;
+      display: grid;
+      place-items: center;
+      background: var(--accent);
+      color: var(--ink);
+      font-size: 20px;
+      letter-spacing: -.09em;
+    }
+    .masthead-note { color: #cacac4; }
+    .masthead-link { font-size: 13px; font-weight: 700; white-space: nowrap; }
+    .directory { padding-block: 22px 26px; border-bottom: 1px solid var(--line); }
+    .directory-heading {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 15px;
+      margin-bottom: 12px;
+    }
+    .directory-heading p { color: var(--muted); font-size: 12px; }
+    .category-grid {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 7px;
+    }
+    .category-grid a {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      min-height: 47px;
+      padding: 11px 12px;
+      border: 1px solid var(--line);
+      background: var(--white);
+      text-decoration: none;
+      font-size: 12px;
+      font-weight: 700;
+      transition: background .15s ease, border-color .15s ease;
+    }
+    .category-grid a:hover { background: var(--pale); border-color: var(--accent); }
+    .category-grid span { color: #77776e; font-size: 14px; }
+    .hero { padding-block: 46px 38px; }
+    .eyebrow { display: flex; align-items: center; gap: 10px; margin-bottom: 22px; }
+    .eyebrow::before { content: ""; width: 9px; height: 9px; background: var(--accent); }
+    .hero h1 {
+      font-size: clamp(54px, 9.8vw, 136px);
+      letter-spacing: -.075em;
+      line-height: .91;
+      font-weight: 900;
+      text-transform: uppercase;
+      max-width: 1150px;
+    }
+    .hero h1 span { color: var(--accent); }
+    .hero-bottom {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 50px;
+      align-items: end;
+      margin-top: 34px;
+    }
+    .hero-description { max-width: 580px; color: var(--muted); font-size: 18px; }
+    .hero-action { display: flex; justify-content: flex-end; }
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 32px;
+      min-height: 52px;
+      padding: 13px 21px;
+      background: var(--ink);
+      color: var(--white);
+      border: 1px solid var(--ink);
+      border-radius: var(--radius);
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 14px;
+    }
+    .button:hover { background: #383834; }
+    .answer-strip { background: var(--accent); padding-block: 27px; }
+    .answer-inner {
+      display: grid;
+      grid-template-columns: 230px 1fr;
+      gap: 40px;
+      align-items: start;
+    }
+    .answer-inner h2 { font-size: 23px; letter-spacing: -.035em; }
+    .answer-inner p { font-size: 16px; line-height: 1.7; max-width: 850px; }
+    .section { padding-block: 66px; border-bottom: 1px solid var(--line); }
+    .section-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: end;
+      gap: 40px;
+      margin-bottom: 30px;
+    }
+    .section-head h2 { max-width: 650px; margin-top: 10px; }
+    .section-intro { color: var(--muted); max-width: 390px; font-size: 15px; }
+    .specimen-list { border-top: 2px solid var(--ink); }
+    .specimen {
+      display: grid;
+      grid-template-columns: 55px 205px minmax(0, 1fr) 250px;
+      gap: 27px;
+      align-items: center;
+      padding-block: 25px;
+      border-bottom: 1px solid var(--line);
+    }
+    .specimen-number { align-self: start; padding-top: 4px; color: var(--muted); }
+    .photo {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 1;
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+      background: #e9e9e5;
+      border-radius: var(--radius);
+    }
+    .photo img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      background: #f2f2ef;
+    }
+    .photo-fallback {
+      position: absolute;
+      inset: 0;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 25px;
+      text-align: center;
+      background: #e8e8e2;
+      color: var(--muted);
+      font-size: 13px;
+    }
+    .photo.image-failed .photo-fallback { display: flex; }
+    .photo.image-failed img { visibility: hidden; }
+    .specimen h3 { margin-block: 8px 12px; font-size: 28px; }
+    .specimen-copy p { color: var(--muted); font-size: 14px; max-width: 440px; }
+    .category-link {
+      display: inline-block;
+      margin-top: 15px;
+      font-size: 13px;
+      font-weight: 700;
+    }
+    .evidence { border-left: 1px solid var(--line); padding-left: 24px; }
+    .evidence p { margin-bottom: 10px; color: var(--muted); }
+    .evidence ul { margin: 0; padding-left: 17px; font-size: 13px; }
+    .evidence li + li { margin-top: 7px; }
+    .reference-note { margin-top: 17px; color: var(--muted); font-size: 12px; max-width: 970px; }
+    .method-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      border: 1px solid var(--line);
+      background: var(--white);
+    }
+    .method-card { padding: 29px; }
+    .method-card + .method-card { border-left: 1px solid var(--line); }
+    .step {
+      width: 35px;
+      height: 35px;
+      display: grid;
+      place-items: center;
+      background: var(--pale);
+      margin-bottom: 24px;
+    }
+    .method-card h3 { margin-bottom: 14px; }
+    .method-card p { color: var(--muted); font-size: 14px; }
+    .record-example {
+      display: grid;
+      grid-template-columns: 1fr 2fr;
+      gap: 35px;
+      margin-top: 30px;
+      padding: 27px;
+      background: #e8e8e2;
+    }
+    .record-example h3 { margin-top: 9px; }
+    .record-fields {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin: 0;
+    }
+    .record-fields dt { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; }
+    .record-fields dd { margin: 5px 0 0; font-size: 13px; color: var(--muted); }
+    .decision-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 36px; }
+    .decision-copy h2 { margin-block: 10px 22px; }
+    .decision-copy p { color: var(--muted); max-width: 500px; }
+    .decision-copy .button { margin-top: 25px; }
+    .questions { margin: 0; background: var(--white); border: 1px solid var(--line); }
+    .question-row { padding: 19px 23px; }
+    .question-row + .question-row { border-top: 1px solid var(--line); }
+    .question-row dt { font-weight: 700; font-size: 15px; }
+    .question-row dd { margin: 6px 0 0; color: var(--muted); font-size: 13px; }
+    .search-box {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      margin-block: 22px 17px;
+    }
+    .search-box label { font-size: 13px; font-weight: 700; white-space: nowrap; }
+    .search-box input {
+      width: 100%;
+      min-height: 48px;
+      border: 1px solid #a8a8a0;
+      background: var(--white);
+      border-radius: var(--radius);
+      padding: 11px 14px;
+      color: var(--ink);
+    }
+    .topic-filters { display: flex; flex-wrap: wrap; gap: 8px; }
+    .topic-filters button {
+      min-height: 42px;
+      padding: 9px 15px;
+      border: 1px solid #b5b5ac;
+      background: transparent;
+      border-radius: var(--radius);
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--ink);
+    }
+    .topic-filters button[aria-pressed="true"] { background: var(--ink); border-color: var(--ink); color: var(--white); }
+    .topic-status { margin-block: 15px; font-size: 12px; color: var(--muted); }
+    .topic-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0 28px; }
+    .topic {
+      padding-block: 13px;
+      border-top: 1px solid var(--line);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+    .topic[hidden] { display: none; }
+    .intent-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 15px; margin-top: 33px; }
+    .intent { padding-top: 14px; border-top: 3px solid var(--accent); }
+    .intent h3 { font-size: 15px; line-height: 1.35; letter-spacing: -.02em; }
+    .intent p { margin-top: 8px; color: var(--muted); font-size: 12px; }
+    .faq-layout { display: grid; grid-template-columns: .8fr 1.2fr; gap: 65px; }
+    .faq-layout h2 { margin-block: 10px 20px; }
+    .faq-layout > div > p { color: var(--muted); font-size: 14px; }
+    details { border-top: 1px solid var(--line); padding-block: 20px; }
+    details:last-child { border-bottom: 1px solid var(--line); }
+    summary { cursor: pointer; font-size: 16px; font-weight: 700; padding-right: 15px; }
+    details p { margin-top: 13px; color: var(--muted); font-size: 14px; }
+    .closing { padding-block: 45px; background: var(--ink); color: var(--white); }
+    .closing-inner { display: flex; justify-content: space-between; align-items: center; gap: 30px; }
+    .closing h2 { font-size: clamp(28px, 4vw, 48px); max-width: 750px; }
+    .closing .button { background: var(--accent); color: var(--ink); border-color: var(--accent); white-space: nowrap; }
+    footer { padding-block: 27px; }
+    .footer-inner { display: flex; justify-content: space-between; gap: 30px; color: var(--muted); font-size: 12px; }
+    .footer-inner p { max-width: 850px; }
+    .footer-inner a { white-space: nowrap; }
+    @media (min-width: 1000px) {
+      .defer { content-visibility: auto; contain-intrinsic-size: auto 650px; }
+    }
+    @media (max-width: 1000px) {
+      .specimen { grid-template-columns: 35px 160px minmax(0, 1fr); gap: 20px; }
+      .evidence { grid-column: 3; margin-top: -7px; padding-left: 0; border-left: 0; }
+      .evidence ul { display: flex; flex-wrap: wrap; gap: 6px 22px; }
+      .evidence li + li { margin-top: 0; }
+      .photo { grid-row: span 2; }
+      .specimen-number { grid-row: span 2; }
+      .intent-grid { grid-template-columns: repeat(3, 1fr); }
+      .faq-layout { gap: 35px; }
+      .record-example { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 720px) {
+      .wrap { width: calc(100% - 32px); }
+      .masthead-inner { min-height: 65px; }
+      .masthead-note { display: none; }
+      .wordmark { font-size: 18px; }
+      .masthead-link { font-size: 12px; }
+      .category-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .directory-heading p { display: none; }
+      .hero { padding-block: 32px; }
+      .hero h1 { font-size: clamp(49px, 12.5vw, 88px); }
+      .hero-bottom { grid-template-columns: 1fr; gap: 23px; margin-top: 24px; }
+      .hero-description { font-size: 16px; }
+      .hero-action { justify-content: flex-start; }
+      .answer-inner { grid-template-columns: 1fr; gap: 13px; }
+      .section { padding-block: 43px; }
+      .section-head { display: block; margin-bottom: 23px; }
+      .section-intro { margin-top: 18px; max-width: 100%; }
+      .specimen { grid-template-columns: 105px minmax(0, 1fr); gap: 16px; padding-block: 21px; }
+      .specimen-number { display: none; }
+      .photo { grid-row: 1; }
+      .specimen h3 { font-size: 23px; }
+      .specimen-copy p { font-size: 13px; }
+      .specimen-copy .mono { font-size: 10px; }
+      .evidence { grid-column: 1 / -1; margin-top: 0; padding-top: 13px; border-top: 1px dashed var(--line); }
+      .evidence p { margin-bottom: 6px; }
+      .method-grid { grid-template-columns: 1fr; }
+      .method-card { padding: 24px; }
+      .method-card + .method-card { border-left: 0; border-top: 1px solid var(--line); }
+      .step { margin-bottom: 15px; }
+      .record-example { padding: 22px; }
+      .record-fields { grid-template-columns: 1fr 1fr; }
+      .decision-grid, .faq-layout { grid-template-columns: 1fr; gap: 28px; }
+      .topic-grid { grid-template-columns: 1fr 1fr; gap: 0 19px; }
+      .intent-grid { grid-template-columns: 1fr 1fr; gap: 20px; }
+      .search-box { align-items: stretch; flex-direction: column; gap: 7px; }
+      .closing-inner, .footer-inner { align-items: flex-start; flex-direction: column; gap: 22px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      * { transition: none !important; }
+    }
+    @media print {
+      body { background: white; }
+      .wrap { width: 100%; }
+      .masthead { background: white; color: black; }
+      .hero h1 { font-size: 60px; }
+      .search-box, .topic-filters, .hero-action, .closing { display: none; }
+      .defer { content-visibility: visible; }
+      .section { padding-block: 25px; }
+      .specimen, .method-card, details { break-inside: avoid; }
+    }
+  </style>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebPage",
+        "name": "BBDBuy Spreadsheet — Product Research & Link Checks",
+        "description": "An independent guide to organizing product links, variants, measurements and supporting evidence in a BBDBuy spreadsheet.",
+        "inLanguage": "en",
+        "about": {
+          "@type": "Thing",
+          "name": "BBDBuy spreadsheet"
+        },
+        "keywords": [
+          "BBDBuy spreadsheet",
+          "BBDBuy product links",
+          "BBDBuy finds",
+          "BBDBuy shopping guide",
+          "BBDBuy spreadsheet categories",
+          "BBDBuy product comparison"
+        ]
+      },
+      {
+        "@type": "FAQPage",
+        "inLanguage": "en",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "What is a BBDBuy spreadsheet?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "A BBDBuy spreadsheet is a product research sheet used to organize candidate item links and comparison notes. Useful fields include the source URL, exact variant, measurements, evidence date and unresolved questions. This page is an independent guide, not an official BBDBuy service."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Where do the category buttons go?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "The category buttons open the corresponding CAFANS category pages. They are browsing shortcuts, not links to an official BBDBuy catalog."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Does a brand reference image verify a seller's item?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "No. A reference image identifies the visual subject being discussed. It does not establish a seller's stock, authorization, authenticity or the condition of an item."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "How should I compare sizes across different listings?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Compare measurements taken using the same method and unit. Keep body measurements separate from garment measurements, and record whether a dimension describes the item, its packaging or a size chart."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Can this page confirm that a product link works with BBDBuy?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "No. Check the exact source URL in the service you intend to use and consult its current support information. Compatibility is not tested or guaranteed by this guide."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "How often should a product row be checked?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Recheck a row before making a purchase decision and whenever the source listing changes. Record when the information was observed rather than assuming that an older price, photo or option is still current."
+            }
+          }
+        ]
+      }
+    ]
+  }
+  </script>
+<link rel="canonical" href="https://kakobuyfinds.github.io/dkyze/">
+</head>
+<body>
+  <!-- index.html | All styling and behavior are contained in this document. -->
+  <header class="masthead">
+    <div class="wrap masthead-inner">
+      <a class="wordmark" href="https://www.cafans.com" aria-label="Browse CAFANS">
+        <span class="mark" aria-hidden="true">B</span>
+        BBDBUY / RESEARCH
+      </a>
+      <span class="mono masthead-note">Independent product research guide</span>
+      <a class="masthead-link" href="https://www.cafans.com">Open CAFANS ↗</a>
+    </div>
+  </header>
+
+  <nav class="directory" aria-label="CAFANS product categories">
+    <div class="wrap">
+      <div class="directory-heading">
+        <p class="mono" style="color:var(--ink)">Start with a category / CAFANS directory</p>
+        <p>Choose the product type before comparing the details.</p>
+      </div>
+      <div class="category-grid">
+        <a href="https://cafans.com/category-911-Shoes.html">Shoes <span aria-hidden="true">↗</span></a>
+        <a href="https://cafans.com/category-912-Hoodies%2FSweaters.html">Hoodies/Sweaters <span aria-hidden="true">↗</span></a>
+        <a href="https://cafans.com/category-913-T-Shirts.html">T-Shirts <span aria-hidden="true">↗</span></a>
+        <a href="https://cafans.com/category-914-Jackets.html">Jackets <span aria-hidden="true">↗</span></a>
+        <a href="https://cafans.com/category-915-Pants%2FShorts.html">Pants/Shorts <span aria-hidden="true">↗</span></a>
+        <a href="https://cafans.com/category-916-Headwear.html">Headwear <span aria-hidden="true">↗</span></a>
+        <a href="https://cafans.com/category-917-Sets.html">Sets <span aria-hidden="true">↗</span></a>
+        <a href="https://cafans.com/category-918-underwear%2Funderpants.html">Underwear/underpants <span aria-hidden="true">↗</span></a>
+        <a href="https://cafans.com/category-919-Jersey.html">Jersey <span aria-hidden="true">↗</span></a>
+        <a href="https://cafans.com/category-920-Accessories.html">Accessories <span aria-hidden="true">↗</span></a>
+      </div>
+    </div>
+  </nav>
+
+  <main>
+    <section class="hero wrap" aria-labelledby="page-title">
+      <p class="mono eyebrow">The product evidence edition</p>
+      <h1 id="page-title">BBDBuy<br><span>spreadsheet.</span></h1>
+      <div class="hero-bottom">
+        <p class="hero-description">
+          Make every product row useful. Keep the original link, the exact
+          variant and the evidence together—so your shortlist stays readable
+          when similar listings start to blur.
+        </p>
+        <div class="hero-action">
+          <a class="button" href="https://www.cafans.com">Explore product categories <span aria-hidden="true">↗</span></a>
+        </div>
+      </div>
+    </section>
+
+    <section class="answer-strip" aria-labelledby="quick-answer">
+      <div class="wrap answer-inner">
+        <h2 id="quick-answer">What is a BBDBuy spreadsheet?</h2>
+        <p>
+          A <strong>BBDBuy spreadsheet</strong> is a product research sheet used
+          to organize candidate item links and comparison notes. Useful fields
+          include the source URL, exact variant, measurements, evidence date
+          and unresolved questions. This page is an independent guide,
+          not an official BBDBuy service.
+        </p>
+      </div>
+    </section>
+
+    <section class="section wrap" aria-labelledby="visual-title">
+      <div class="section-head">
+        <div>
+          <p class="mono">01 / Visual reference desk</p>
+          <h2 id="visual-title">A picture starts the search.<br>Details complete the row.</h2>
+        </div>
+        <p class="section-intro">
+          Use these brand references to understand what to document.
+          The category links open CAFANS browsing pages; the images
+          are separate editorial references.
+        </p>
+      </div>
+
+      <div class="specimen-list">
+        <article class="specimen">
+          <span class="mono specimen-number">A—01</span>
+          <figure class="photo">
+            <!-- Image source: Nike official product photography. -->
+            <img
+              src="https://static.nike.com/a/images/t_PDP_144_v1/f_auto%2Cq_auto%3Aeco%2Cu_9ddf04c7-2a9a-4d76-add1-d15af8f0263d%2Cc_scale%2Cfl_relative%2Cw_1.0%2Ch_1.0%2Cfl_layer_apply/bfae7c32-5fb0-4bf4-b3a8-25a713a77dd7/AIR%2BFORCE%2B1%2BLOW%2BQS%2BCAMO.png"
+              alt="Nike Air Force 1 Low sneaker product reference"
+              width="205"
+              height="205"
+              loading="lazy"
+              decoding="async">
+            <figcaption class="photo-fallback">Nike sneaker reference<br>Image temporarily unavailable</figcaption>
+          </figure>
+          <div class="specimen-copy">
+            <p class="mono">Nike / Footwear reference</p>
+            <h3>Separate the silhouette<br>from the variant.</h3>
+            <p>
+              Save the model identifier and selected color beside the source
+              link. A similar shape or matching search title is not enough
+              to establish that two listings describe the same item.
+            </p>
+            <a class="category-link" href="https://cafans.com/category-911-Shoes.html">Browse Shoes ↗</a>
+          </div>
+          <aside class="evidence" aria-label="Footwear fields to record">
+            <p class="mono">Record these fields</p>
+            <ul>
+              <li>Model or style identifier</li>
+              <li>Selected color and size system</li>
+              <li>Measurement source and date</li>
+            </ul>
+          </aside>
+        </article>
+
+        <article class="specimen">
+          <span class="mono specimen-number">A—02</span>
+          <figure class="photo">
+            <!-- Image source: Louis Vuitton official Embossed LV T-Shirt product photography. -->
+            <img
+              src="https://us.louisvuitton.com/images/is/image/lv/1/PP_VP_L/louis-vuitton-embossed-lv-t-shirt--HNY55WDT3000_PM2_Front%20view.jpg?wid=420&amp;hei=420"
+              alt="White Louis Vuitton Embossed LV T-Shirt shown from the front"
+              width="205"
+              height="205"
+              loading="lazy"
+              decoding="async">
+            <figcaption class="photo-fallback">Louis Vuitton clothing reference<br>Image temporarily unavailable</figcaption>
+          </figure>
+          <div class="specimen-copy">
+            <p class="mono">Louis Vuitton / Clothing reference</p>
+            <h3>Make the fit<br>measurable.</h3>
+            <p>
+              Add garment dimensions and the measuring method. Keep chest
+              width, garment length and shoulder width in separate fields
+              rather than hiding every measurement inside one note.
+            </p>
+            <a class="category-link" href="https://cafans.com/category-913-T-Shirts.html">Browse T-Shirts ↗</a>
+          </div>
+          <aside class="evidence" aria-label="Clothing fields to record">
+            <p class="mono">Record these fields</p>
+            <ul>
+              <li>Garment measurements and units</li>
+              <li>Fabric claim from the listing</li>
+              <li>Front, back and detail references</li>
+            </ul>
+          </aside>
+        </article>
+
+        <article class="specimen">
+          <span class="mono specimen-number">A—03</span>
+          <figure class="photo">
+            <!-- Image source: Gucci product image CDN; Gucci print cotton baseball hat. -->
+            <img
+              src="https://media.gucci.com/style/White_South_0_160_316x316/1695659492/773135_4HA7F_4200_001_100_0000_Light-Gucci-print-cotton-baseball-hat.jpg"
+              alt="Gucci print cotton baseball hat product reference"
+              width="205"
+              height="205"
+              loading="lazy"
+              decoding="async">
+            <figcaption class="photo-fallback">Gucci headwear reference<br>Image temporarily unavailable</figcaption>
+          </figure>
+          <div class="specimen-copy">
+            <p class="mono">Gucci / Headwear reference</p>
+            <h3>Look beyond<br>the front view.</h3>
+            <p>
+              A useful headwear record includes the adjustment mechanism,
+              interior view and stated circumference range. Keep seller
+              wording separate from details visible in the photographs.
+            </p>
+            <a class="category-link" href="https://cafans.com/category-916-Headwear.html">Browse Headwear ↗</a>
+          </div>
+          <aside class="evidence" aria-label="Headwear fields to record">
+            <p class="mono">Record these fields</p>
+            <ul>
+              <li>Circumference range</li>
+              <li>Closure and adjustment detail</li>
+              <li>Interior and rear-view evidence</li>
+            </ul>
+          </aside>
+        </article>
+
+        <article class="specimen">
+          <span class="mono specimen-number">A—04</span>
+          <figure class="photo">
+            <!-- Image source: Hermès official Clic H bracelet product photography. -->
+            <img
+              src="https://assets.hermes.com/is/image/hermesproduct/700001F%2031_front_wm_101?%24product_default_bg%24="
+              alt="White and gold-tone Hermès Clic H bracelet reference"
+              width="205"
+              height="205"
+              loading="lazy"
+              decoding="async">
+            <figcaption class="photo-fallback">Hermès jewelry reference<br>Image temporarily unavailable</figcaption>
+          </figure>
+          <div class="specimen-copy">
+            <p class="mono">Hermès / Jewelry reference</p>
+            <h3>Document the finish.<br>Check the dimensions.</h3>
+            <p>
+              Record the listed material, finish, width and circumference.
+              A color description alone does not tell you the composition,
+              surface treatment or fit of an accessory.
+            </p>
+            <a class="category-link" href="https://cafans.com/category-920-Accessories.html">Browse Accessories ↗</a>
+          </div>
+          <aside class="evidence" aria-label="Jewelry fields to record">
+            <p class="mono">Record these fields</p>
+            <ul>
+              <li>Listed material and finish</li>
+              <li>Width and circumference</li>
+              <li>Clasp and surface close-ups</li>
+            </ul>
+          </aside>
+        </article>
+      </div>
+
+      <p class="reference-note">
+        Brand photography is used for visual reference. It does not verify
+        CAFANS listings, seller authorization, authenticity, stock or item
+        condition. Nike, Louis Vuitton, Gucci and Hermès are trademarks of
+        their respective owners. No brand or BBDBuy affiliation is claimed.
+      </p>
+    </section>
+
+    <section class="section wrap defer" aria-labelledby="method-title">
+      <div class="section-head">
+        <div>
+          <p class="mono">02 / BBDBuy shopping guide</p>
+          <h2 id="method-title">Build the record<br>before the shortlist.</h2>
+        </div>
+        <p class="section-intro">
+          The same three-part method works across shoes, jerseys, outerwear
+          and accessories. Treat missing information as an open question,
+          not a confirmed detail.
+        </p>
+      </div>
+
+      <div class="method-grid">
+        <article class="method-card">
+          <span class="step mono">01</span>
+          <h3>Capture the source.</h3>
+          <p>
+            Store the original product URL, seller name, item identifier
+            and observation date. Keep the full source in your own sheet
+            even when you use a shorter display label.
+          </p>
+        </article>
+        <article class="method-card">
+          <span class="step mono">02</span>
+          <h3>Isolate the variant.</h3>
+          <p>
+            Record the chosen color, size and option text. Where several
+            variants share a listing, use separate rows whenever their
+            measurements, photos or quoted prices differ.
+          </p>
+        </article>
+        <article class="method-card">
+          <span class="step mono">03</span>
+          <h3>Keep the evidence.</h3>
+          <p>
+            Add the relevant photo reference, measurement source and
+            unanswered questions. Revisit the original listing before
+            acting on an old note or comparison.
+          </p>
+        </article>
+      </div>
+
+      <aside class="record-example" aria-labelledby="record-title">
+        <div>
+          <p class="mono">Illustrative row / not a live listing</p>
+          <h3 id="record-title">A compact product record.</h3>
+        </div>
+        <dl class="record-fields">
+          <div><dt>Source</dt><dd>Original item URL</dd></div>
+          <div><dt>Variant</dt><dd>Exact option text</dd></div>
+          <div><dt>Measurements</dt><dd>Value + unit + method</dd></div>
+          <div><dt>Evidence</dt><dd>Photo or chart reference</dd></div>
+          <div><dt>Checked</dt><dd>Observation date</dd></div>
+          <div><dt>Open question</dt><dd>What still needs confirming</dd></div>
+        </dl>
+      </aside>
+    </section>
+
+    <section class="section wrap defer" aria-labelledby="comparison-title">
+      <div class="decision-grid">
+        <div class="decision-copy">
+          <p class="mono">03 / BBDBuy product comparison</p>
+          <h2 id="comparison-title">Compare like<br>with like.</h2>
+          <p>
+            Two rows can look comparable while describing different variants,
+            measuring methods or levels of evidence. Make those differences
+            visible before deciding which item belongs on your shortlist.
+          </p>
+          <a class="button" href="https://www.cafans.com">Continue browsing on CAFANS <span aria-hidden="true">↗</span></a>
+        </div>
+        <dl class="questions">
+          <div class="question-row">
+            <dt>Are these the same product options?</dt>
+            <dd>Match the selected variant and identifier, not only the title or cover photograph.</dd>
+          </div>
+          <div class="question-row">
+            <dt>Do the measurements describe the same thing?</dt>
+            <dd>A flat garment width, a body circumference and a package dimension are different records.</dd>
+          </div>
+          <div class="question-row">
+            <dt>Are the costs being compared on the same basis?</dt>
+            <dd>Separate the item quote from delivery, service charges and other costs that may apply.</dd>
+          </div>
+          <div class="question-row">
+            <dt>Which details are still uncertain?</dt>
+            <dd>Mark an unconfirmed fabric, missing photo or unclear option explicitly instead of filling the gap by assumption.</dd>
+          </div>
+        </dl>
+      </div>
+    </section>
+
+    <section class="section wrap defer" aria-labelledby="topics-title">
+      <div class="section-head">
+        <div>
+          <p class="mono">04 / Research topic index</p>
+          <h2 id="topics-title">Find the question<br>behind the keyword.</h2>
+        </div>
+        <p class="section-intro">
+          Thirty long-tail research topics, grouped by intent. These are
+          suggested questions for organizing your research, not measured
+          search-volume or trend data.
+        </p>
+      </div>
+
+      <div class="search-box">
+        <label for="topic-search">Filter research topics</label>
+        <input id="topic-search" type="search" placeholder="Try measurements, shoes or product links" autocomplete="off" aria-controls="topic-list">
+      </div>
+
+      <div class="topic-filters" role="group" aria-label="Research topic groups">
+        <button type="button" data-filter="all" aria-pressed="true">All topics</button>
+        <button type="button" data-filter="links" aria-pressed="false">Links &amp; records</button>
+        <button type="button" data-filter="categories" aria-pressed="false">Categories</button>
+        <button type="button" data-filter="evidence" aria-pressed="false">Fit &amp; evidence</button>
+      </div>
+
+      <p class="topic-status" id="topic-status" role="status" aria-live="polite">Showing 30 research topics.</p>
+
+      <div class="topic-grid" id="topic-list">
+        <p class="topic" data-group="links">BBDBuy spreadsheet for beginners</p>
+        <p class="topic" data-group="links">how to organize BBDBuy product links</p>
+        <p class="topic" data-group="links">BBDBuy spreadsheet source URL checklist</p>
+        <p class="topic" data-group="links">how to check duplicate BBDBuy finds</p>
+        <p class="topic" data-group="links">BBDBuy spreadsheet variant tracking</p>
+        <p class="topic" data-group="links">BBDBuy product link research notes</p>
+        <p class="topic" data-group="links">BBDBuy spreadsheet observation dates</p>
+        <p class="topic" data-group="links">BBDBuy finds seller comparison fields</p>
+        <p class="topic" data-group="links">BBDBuy spreadsheet missing information log</p>
+        <p class="topic" data-group="links">how to maintain a BBDBuy product shortlist</p>
+
+        <p class="topic" data-group="categories">BBDBuy spreadsheet shoes research</p>
+        <p class="topic" data-group="categories">BBDBuy spreadsheet hoodies and sweaters</p>
+        <p class="topic" data-group="categories">BBDBuy spreadsheet T-shirt comparison</p>
+        <p class="topic" data-group="categories">BBDBuy spreadsheet jacket measurements</p>
+        <p class="topic" data-group="categories">BBDBuy spreadsheet pants and shorts</p>
+        <p class="topic" data-group="categories">BBDBuy spreadsheet headwear sizing</p>
+        <p class="topic" data-group="categories">BBDBuy spreadsheet matching sets checklist</p>
+        <p class="topic" data-group="categories">BBDBuy spreadsheet underwear product notes</p>
+        <p class="topic" data-group="categories">BBDBuy spreadsheet jersey size records</p>
+        <p class="topic" data-group="categories">BBDBuy spreadsheet accessories comparison</p>
+
+        <p class="topic" data-group="evidence">BBDBuy shopping guide garment measurements</p>
+        <p class="topic" data-group="evidence">BBDBuy product comparison photo checklist</p>
+        <p class="topic" data-group="evidence">BBDBuy finds color variant documentation</p>
+        <p class="topic" data-group="evidence">BBDBuy spreadsheet material description notes</p>
+        <p class="topic" data-group="evidence">BBDBuy spreadsheet size chart reference</p>
+        <p class="topic" data-group="evidence">BBDBuy spreadsheet item cost breakdown</p>
+        <p class="topic" data-group="evidence">BBDBuy spreadsheet packaging weight notes</p>
+        <p class="topic" data-group="evidence">BBDBuy spreadsheet product evidence record</p>
+        <p class="topic" data-group="evidence">BBDBuy shopping guide unanswered questions</p>
+        <p class="topic" data-group="evidence">BBDBuy product comparison before purchase</p>
+      </div>
+
+      <div class="intent-grid" aria-label="Five supporting research themes">
+        <article class="intent">
+          <h3>BBDBuy product links</h3>
+          <p>Preserve the source and exact item identifier.</p>
+        </article>
+        <article class="intent">
+          <h3>BBDBuy finds</h3>
+          <p>Turn saved discoveries into a manageable shortlist.</p>
+        </article>
+        <article class="intent">
+          <h3>BBDBuy shopping guide</h3>
+          <p>Follow a repeatable method for documenting details.</p>
+        </article>
+        <article class="intent">
+          <h3>BBDBuy spreadsheet categories</h3>
+          <p>Group products by type before comparing them.</p>
+        </article>
+        <article class="intent">
+          <h3>BBDBuy product comparison</h3>
+          <p>Separate confirmed information from open questions.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section wrap defer" aria-labelledby="faq-title">
+      <div class="faq-layout">
+        <div>
+          <p class="mono">05 / Direct answers</p>
+          <h2 id="faq-title">Before you<br>save the row.</h2>
+          <p>
+            Clear definitions help keep a research sheet useful.
+            Confirm service-specific details with the service you intend
+            to use and check the original product source.
+          </p>
+        </div>
+        <div>
+          <details open>
+            <summary>Where do the category buttons go?</summary>
+            <p>The category buttons open the corresponding CAFANS category pages. They are browsing shortcuts, not links to an official BBDBuy catalog.</p>
+          </details>
+          <details>
+            <summary>Does a brand reference image verify a seller’s item?</summary>
+            <p>No. A reference image identifies the visual subject being discussed. It does not establish a seller’s stock, authorization, authenticity or the condition of an item.</p>
+          </details>
+          <details>
+            <summary>How should I compare sizes across different listings?</summary>
+            <p>Compare measurements taken using the same method and unit. Keep body measurements separate from garment measurements, and record whether a dimension describes the item, its packaging or a size chart.</p>
+          </details>
+          <details>
+            <summary>Can this page confirm that a product link works with BBDBuy?</summary>
+            <p>No. Check the exact source URL in the service you intend to use and consult its current support information. Compatibility is not tested or guaranteed by this guide.</p>
+          </details>
+          <details>
+            <summary>How often should a product row be checked?</summary>
+            <p>Recheck a row before making a purchase decision and whenever the source listing changes. Record when the information was observed rather than assuming that an older price, photo or option is still current.</p>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <section class="closing" aria-labelledby="closing-title">
+      <div class="wrap closing-inner">
+        <h2 id="closing-title">A clearer shortlist starts<br>with a better product record.</h2>
+        <a class="button" href="https://www.cafans.com">Browse CAFANS <span aria-hidden="true">↗</span></a>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="wrap footer-inner">
+      <p>
+        BBDBuy Spreadsheet Research · Independent editorial guide.
+        Product examples are references rather than offers for sale.
+        Images remain the property of their respective rights holders.
+      </p>
+      <a href="https://www.cafans.com">www.cafans.com ↗</a>
+    </div>
+  </footer>
+
+  <script>
+    (() => {
+      "use strict";
+
+      const input = document.getElementById("topic-search");
+      const buttons = Array.from(document.querySelectorAll("[data-filter]"));
+      const topics = Array.from(document.querySelectorAll(".topic"));
+      const status = document.getElementById("topic-status");
+      let activeGroup = "all";
+
+      function updateTopics() {
+        const query = input.value.trim().toLowerCase();
+        let visible = 0;
+
+        topics.forEach((topic) => {
+          const groupMatches =
+            activeGroup === "all" || topic.dataset.group === activeGroup;
+          const queryMatches =
+            !query || topic.textContent.toLowerCase().includes(query);
+          topic.hidden = !(groupMatches && queryMatches);
+          if (!topic.hidden) visible += 1;
+        });
+
+        status.textContent = visible
+          ? `Showing ${visible} research ${visible === 1 ? "topic" : "topics"}.`
+          : "No matching topics. Try a broader phrase or select All topics.";
+      }
+
+      input.addEventListener("input", updateTopics);
+
+      buttons.forEach((button) => {
+        button.addEventListener("click", () => {
+          activeGroup = button.dataset.filter;
+          buttons.forEach((item) => {
+            item.setAttribute("aria-pressed", String(item === button));
+          });
+          updateTopics();
+        });
+      });
+
+      document.querySelectorAll(".photo img").forEach((img) => {
+        const showFallback = () => {
+          img.parentElement.classList.add("image-failed");
+        };
+        img.addEventListener("error", showFallback, { once: true });
+        if (img.complete && img.naturalWidth === 0) showFallback();
+      });
+    })();
+  </script>
+</body>
+</html>
